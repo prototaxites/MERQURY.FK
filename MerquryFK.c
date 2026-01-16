@@ -6,7 +6,7 @@
  *  Date  :  March, 2021
  *
  *********************************************************************************************/
- 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -101,7 +101,7 @@ static int64 *scan_asm(char *atab, char *aprf, char *aroot, char *rroot, char *o
 
   if (VERBOSE)
     fprintf(stderr,"\n Making .qv and .bed files for assembly %s\n",aroot);
-  
+
   AP = Open_Profiles(atab);
   RP = Open_Profiles(aprf);
   if (AP == NULL)
@@ -168,7 +168,7 @@ static int64 *scan_asm(char *atab, char *aprf, char *aroot, char *rroot, char *o
         fprintf(bed,"\t%d\n",last);
 
       err = 1. - pow(1.-(1.*miss)/tots,1./KMER);
-      qv  = -10.*log10(err); 
+      qv  = -10.*log10(err);
       fprintf(qvs,"%lld\t%lld\t%.4f\t%.1f\n",miss,tots,err,qv);
       TOTS += tots;
       MISS += miss;
@@ -271,7 +271,7 @@ static int merge_blocks(int mtop, Mark *mark)
             }
 
           if (last >= 0)
-            { for (k = last+2; k <= bidx; k += 2) 
+            { for (k = last+2; k <= bidx; k += 2)
                 { mark[last].mrk += mark[k].mrk;
                   mark[last].opp += mark[k-1].mrk;
                 }
@@ -281,7 +281,7 @@ static int merge_blocks(int mtop, Mark *mark)
             { int tmrk, topp;
 
               tmrk = topp = 0;
-              for (k = last+2; k <= bidx; k += 2) 
+              for (k = last+2; k <= bidx; k += 2)
                 { tmrk += mark[k].mrk;
                   topp += mark[k-1].mrk;
                 }
@@ -292,7 +292,7 @@ static int merge_blocks(int mtop, Mark *mark)
             }
           else
             last = 0;
-          
+
           for (k = bidx+2; k < j; k += 2)
             { mark[j].mrk += mark[k-1].mrk;
               mark[j].opp += mark[k].mrk;
@@ -488,7 +488,7 @@ static int phase_blocks(char *aroot, char *mroot, char *proot,
                     }
                   NBLK += mtop;
                 }
-               
+
               while (aprof[x+1] == 0)
                 x += 1;
               eoc  = 0;
@@ -534,7 +534,7 @@ static void block_stats(char *aroot, char *out, char *troot)
         break;
     }
   fclose(nfile);
-  
+
   sfile = fopen(Catenate(out,".",aroot,".phased_block.stats"),"w");
   fprintf(sfile,"# Blocks\tSum\tMin.\tAvg.\tN50\tMax.\n");
   fprintf(sfile,"%d\t%lld\t%d\t%lld\t%d\t%d\n",NBLK,BTOT,BMIN,BTOT/NBLK,bn50,BMAX);
@@ -584,7 +584,7 @@ int main(int argc, char *argv[])
   char  *SORT_PATH;
 
   char   command[5000];
-  
+
   //  Command line processing
 
   { int    i, j, k;
@@ -750,14 +750,8 @@ int main(int argc, char *argv[])
       READS = PathnRoot(READS,".ktab");
       RROOT = Root(READS,"");
       if (MAT != NULL)
-        { char *x;
-
-          x   = PathnRoot(MAT,".ktab");
-          MAT = PathnRoot(x,".hap");
-          free(x);
-          x   = PathnRoot(PAT,".ktab");
-          PAT = PathnRoot(x,".hap");
-          free(x);
+        { MAT = PathnRoot(MAT,".ktab");
+          PAT = PathnRoot(PAT,".ktab");
 
           MROOT = Root(MAT,"");
           PROOT = Root(PAT,"");
@@ -791,8 +785,8 @@ int main(int argc, char *argv[])
 
       KMER = check_table(Catenate(READS,".ktab","",""),0);
       if (MAT != NULL)
-        { KMER = check_table(Catenate(MAT,".hap",".ktab",""),KMER);
-          KMER = check_table(Catenate(PAT,".hap",".ktab",""),KMER);
+        { KMER = check_table(Catenate(MAT,".ktab","",""),KMER);
+          KMER = check_table(Catenate(PAT,".ktab","",""),KMER);
         }
 
       if (VERBOSE)
@@ -828,7 +822,7 @@ int main(int argc, char *argv[])
       int    high = Rhist->high;
       int64 *hist = Rhist->hist;
 
-      for (k = low+1; hist[k] < hist[k-1]; k++) 
+      for (k = low+1; hist[k] < hist[k-1]; k++)
         if (k >= high)
           break;
       SOLID_THRESH = k;
@@ -864,11 +858,11 @@ int main(int argc, char *argv[])
           APRF[i] = MyTemp(templateR[i]);
 
           sprintf(command,"FastK -k%d -T%d -P%s -t1 -p %s -N%s",
-                          KMER,NTHREADS,SORT_PATH,A,ATAB[i]); 
+                          KMER,NTHREADS,SORT_PATH,A,ATAB[i]);
           SystemX(command);
 
           sprintf(command,"FastK -k%d -T%d -P%s -p:%s %s -N%s",
-                          KMER,NTHREADS,SORT_PATH,READS,A,APRF[i]); 
+                          KMER,NTHREADS,SORT_PATH,READS,A,APRF[i]);
           SystemX(command);
 
           //  Make a CN-spectra plot
@@ -888,7 +882,7 @@ int main(int argc, char *argv[])
           //  Output global qv
 
           err = 1. - pow(1.-(1.*summary[0])/summary[1],1./KMER);
-          qv  = -10.*log10(err); 
+          qv  = -10.*log10(err);
           fprintf(qvs,"%s\t%lld\t%lld\t%.4f\t%.1f\n",R,summary[0],summary[1],100.*err,qv);
 
           if (i == 0)
@@ -899,7 +893,7 @@ int main(int argc, char *argv[])
             { miss += summary[0];
               totl += summary[1];
               err = 1. - pow(1.-(1.*miss)/totl,1./KMER);
-              qv  = -10.*log10(err); 
+              qv  = -10.*log10(err);
               fprintf(qvs,"both\t%lld\t%lld\t%.4f\t%.1f\n",miss,totl,100.*err,qv);
             }
         }
@@ -912,7 +906,7 @@ int main(int argc, char *argv[])
     if (ASM[1] == NULL)
       { Histogram *H;
         FILE      *cps;
-       
+
         //  Compute & output completeness stat
 
         if (VERBOSE)
@@ -921,7 +915,7 @@ int main(int argc, char *argv[])
         sprintf(command,"Logex -H1 -T%d '%s.0 = A&.B[%d-]' %s %s",
                         NTHREADS,troot,SOLID_THRESH,ATAB[0],READS);
         SystemX(command);
-      
+
         cps = fopen(Catenate(OUT,"","",".completeness.stats"),"a");
         fprintf(cps,"Assembly\tRegion\tFound\tTotal\t%% Covered\n");
 
@@ -982,7 +976,7 @@ int main(int argc, char *argv[])
                 NTHREADS,troot,SOLID_THRESH,troot,SOLID_THRESH,troot,SOLID_THRESH,
                 ATAB[0],ATAB[1],A1uA2,READS);
         SystemX(command);
-      
+
         cps = fopen(Catenate(OUT,"","",".completeness.stats"),"a");
         fprintf(cps,"Assembly\tRegion\tFound\tTotal\t%% Covered\n");
 
@@ -1021,7 +1015,7 @@ int main(int argc, char *argv[])
         asm_plot(Out,KEEP,ASM,ATAB,READS,
                  XDIM,YDIM,XREL,YREL,XMAX,YMAX,PDF,ZGRAM,
                  LINE,FILL,STACK,NTHREADS);
-      } 
+      }
   }
 
   if (MAT == NULL)
@@ -1119,11 +1113,11 @@ int main(int argc, char *argv[])
         MPRF[i] = MyTemp(templateM[i]);
         PPRF[i] = MyTemp(templateP[i]);
 
-        sprintf(command,"FastK -T%d -P%s -k%d -p:%s.hap %s -N%s",
+        sprintf(command,"FastK -T%d -P%s -k%d -p:%s %s -N%s",
                         NTHREADS,SORT_PATH,KMER,MAT,A,MPRF[i]);
         SystemX(command);
 
-        sprintf(command,"FastK -T%d -P%s -k%d -p:%s.hap %s -N%s",
+        sprintf(command,"FastK -T%d -P%s -k%d -p:%s %s -N%s",
                         NTHREADS,SORT_PATH,KMER,PAT,A,PPRF[i]);
         SystemX(command);
 
@@ -1201,7 +1195,7 @@ clean_up:
     for (i = 0; i < 2; i++)
       { char *A = ASM[i];
         char *R = AROOT[i];
- 
+
         if (A == NULL)
           continue;
 
